@@ -1,10 +1,3 @@
-/**
- * src/screens/Dashboard/ActivityTracker.tsx
- * (FILE BARU - Sesuai desain 'image_b81f6e.png')
- *
- * Layar detail yang dibuka dari Home.tsx.
- */
-
 import React from 'react';
 import {
   View,
@@ -13,16 +6,26 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  Image, 
 } from 'react-native';
 import { COLORS } from '../../constant/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
-// (PERBAIKAN: Import Tipe Navigasi yang baru)
 import { HomeStackNavigationProp } from '../../navigation/types';
+import LinearGradient from 'react-native-linear-gradient'; 
 
-// Tipe untuk props navigasi
 type Props = {
   navigation: HomeStackNavigationProp<'ActivityTracker'>;
 };
+
+const barChartData = [
+  { day: 'Sun', height: 40 },
+  { day: 'Mon', height: 80 },
+  { day: 'Tue', height: 60 },
+  { day: 'Wed', height: 75 },
+  { day: 'Thu', height: 90 },
+  { day: 'Fri', height: 30 },
+  { day: 'Sat', height: 70 },
+];
 
 const ActivityTrackerScreen: React.FC<Props> = ({ navigation }) => {
   return (
@@ -42,34 +45,47 @@ const ActivityTrackerScreen: React.FC<Props> = ({ navigation }) => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         
-        {/* --- Today Target --- */}
-        <View style={styles.targetCard}>
-          <Text style={styles.sectionTitle}>Today Target</Text>
-          <TouchableOpacity style={styles.addButton}>
-            <Icon name="add" size={16} color={COLORS.white} />
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.targetMetricsContainer}>
-          <View style={styles.metricBox}>
-            {/* Icon air */}
-            <View style={styles.metricIconContainer}>
-              <Icon name="water" size={20} color={COLORS.gradientStart} />
-            </View>
-            <Text style={styles.metricValue}>8L</Text>
-            <Text style={styles.metricLabel}>Water Intake</Text>
+        {/* --- Today Target (PERBAIKAN DESAIN) --- */}
+        <LinearGradient
+          colors={['#E1D3FF', '#C58BF2']} // Gradien ungu muda
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.targetCard}
+        >
+          <View style={styles.targetHeader}>
+            <Text style={styles.sectionTitleFigma}>Today Target</Text>
+            <TouchableOpacity style={styles.addButtonFigma}>
+              <Icon name="add" size={16} color={COLORS.white} />
+            </TouchableOpacity>
           </View>
-          <View style={styles.metricBox}>
-            {/* Icon langkah kaki */}
-            <View style={styles.metricIconContainer}>
-              <Icon name="footsteps" size={20} color={COLORS.gradientStart} />
+          
+          <View style={styles.targetMetricsContainer}>
+            {/* --- Metric Box (Desain Baru) --- */}
+            <View style={styles.metricBox}>
+              <Image 
+                source={require('../../assets/images/dummy-water.png')} // Ganti dengan ikon Anda
+                style={styles.metricIconFigma} 
+              />
+              <View>
+                <Text style={styles.metricValue}>8L</Text>
+                <Text style={styles.metricLabel}>Water Intake</Text>
+              </View>
             </View>
-            <Text style={styles.metricValue}>2400</Text>
-            <Text style={styles.metricLabel}>Foot Steps</Text>
+            {/* --- Metric Box (Desain Baru) --- */}
+            <View style={styles.metricBox}>
+              <Image 
+                source={require('../../assets/images/dummy-steps.png')} // Ganti dengan ikon Anda
+                style={styles.metricIconFigma} 
+              />
+              <View>
+                <Text style={styles.metricValue}>2400</Text>
+                <Text style={styles.metricLabel}>Foot Steps</Text>
+              </View>
+            </View>
           </View>
-        </View>
+        </LinearGradient>
 
-        {/* --- Activity Progress --- */}
+        {/* --- Activity Progress (PERBAIKAN DESAIN) --- */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Activity Progress</Text>
           <TouchableOpacity style={styles.dropdownButton}>
@@ -78,9 +94,19 @@ const ActivityTrackerScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         
-        {/* Placeholder untuk Grafik Batang (Bar Chart) */}
-        <View style={styles.barChartPlaceholder}>
-          <Text style={styles.placeholderText}>Grafik Batang Mingguan</Text>
+        {/* Placeholder untuk Grafik Batang (PERBAIKAN DESAIN) */}
+        <View style={styles.barChartContainer}>
+          {barChartData.map((item, index) => (
+            <View key={index} style={styles.barItem}>
+              <View style={styles.barWrapper}>
+                <LinearGradient
+                  colors={['#C58BF2', '#EEA4CE']}
+                  style={[styles.bar, { height: `${item.height}%` }]}
+                />
+              </View>
+              <Text style={styles.barLabel}>{item.day}</Text>
+            </View>
+          ))}
         </View>
 
         {/* --- Latest Activity --- */}
@@ -91,27 +117,35 @@ const ActivityTrackerScreen: React.FC<Props> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         
-        {/* List Aktivitas */}
-        <View style={styles.activityItem}>
-          <View style={styles.activityIcon}></View>
-          <View style={styles.activityTextContainer}>
-            <Text style={styles.activityName}>Drinking 300ml Water</Text>
-            <Text style={styles.activityTime}>About 3 minutes ago</Text>
+        {/* List Aktivitas (PERBAIKAN DESAIN) */}
+        <View style={styles.activityListContainer}>
+          <View style={styles.activityItem}>
+            <Image 
+              source={require('../../assets/images/dummy-avatar1.png')} 
+              style={styles.activityIcon} 
+            />
+            <View style={styles.activityTextContainer}>
+              <Text style={styles.activityName}>Drinking 300ml Water</Text>
+              <Text style={styles.activityTime}>About 3 minutes ago</Text>
+            </View>
+            <TouchableOpacity>
+              <Icon name="ellipsis-vertical" size={20} color={COLORS.textGray} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <Icon name="ellipsis-vertical" size={20} color={COLORS.textGray} />
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.activityItem}>
-          <View style={styles.activityIcon}></View>
-          <View style={styles.activityTextContainer}>
-            <Text style={styles.activityName}>Eat Snack (fitbar)</Text>
-            <Text style={styles.activityTime}>About 10 minutes ago</Text>
+          
+          <View style={styles.activityItem}>
+            <Image 
+              source={require('../../assets/images/dummy-avatar2.png')} 
+              style={styles.activityIcon} 
+            />
+            <View style={styles.activityTextContainer}>
+              <Text style={styles.activityName}>Eat Snack (fitbar)</Text>
+              <Text style={styles.activityTime}>About 10 minutes ago</Text>
+            </View>
+            <TouchableOpacity>
+              <Icon name="ellipsis-vertical" size={20} color={COLORS.textGray} />
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity>
-            <Icon name="ellipsis-vertical" size={20} color={COLORS.textGray} />
-          </TouchableOpacity>
         </View>
 
       </ScrollView>
@@ -119,7 +153,6 @@ const ActivityTrackerScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// (STYLES)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -132,7 +165,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
     paddingVertical: 10,
-    marginTop: StatusBar.currentHeight || 20, // Untuk Status Bar
+    marginTop: StatusBar.currentHeight || 20, 
+    backgroundColor: COLORS.white, 
   },
   headerTitle: {
     fontFamily: 'Poppins-Bold',
@@ -148,63 +182,62 @@ const styles = StyleSheet.create({
   // ScrollView
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 20, // Padding bawah (tidak 40)
   },
-  // Target Card
   targetCard: {
+    padding: 20,
+    borderRadius: 20,
+    marginTop: 10,
+    marginBottom: 20,
+  },
+  targetHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 15,
-    backgroundColor: COLORS.background, // Abu-abu
-    borderRadius: 15,
-    marginTop: 10,
+    marginBottom: 15,
   },
-  sectionTitle: {
+  sectionTitleFigma: { 
     fontFamily: 'Poppins-Bold',
-    fontSize: 18,
-    color: COLORS.textBlack,
+    fontSize: 16,
+    color: COLORS.textBlack, 
   },
-  addButton: {
+  addButtonFigma: {
     width: 30,
     height: 30,
-    borderRadius: 15,
-    backgroundColor: COLORS.gradientStart,
+    borderRadius: 10, 
+    backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
+    opacity: 0.8,
   },
-  // Target Metrics
+  // --- DESAIN BARU: Target Metrics ---
   targetMetricsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 15,
   },
   metricBox: {
     flex: 1,
+    flexDirection: 'row', 
+    alignItems: 'center',
     padding: 15,
     backgroundColor: COLORS.white,
     borderRadius: 15,
     marginHorizontal: 5,
-    alignItems: 'center',
     // Shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowColor: '#C58BF2',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
     shadowRadius: 10,
-    elevation: 2,
+    elevation: 5,
   },
-  metricIconContainer: {
+  metricIconFigma: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
+    marginRight: 10,
   },
   metricValue: {
     fontFamily: 'Poppins-SemiBold',
-    fontSize: 16,
+    fontSize: 14,
     color: COLORS.gradientStart,
   },
   metricLabel: {
@@ -212,18 +245,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.textGray,
   },
-  // Activity Progress
+  
+  // --- DESAIN BARU: Activity Progress ---
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: 10, 
     marginBottom: 15,
+  },
+  sectionTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 18,
+    color: COLORS.textBlack,
   },
   dropdownButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.gradientStart,
+    backgroundColor: 'rgba(197, 139, 242, 0.2)', 
     paddingHorizontal: 15,
     paddingVertical: 8,
     borderRadius: 10,
@@ -231,40 +270,77 @@ const styles = StyleSheet.create({
   dropdownText: {
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
-    color: COLORS.white,
+    color: COLORS.gradientStart, 
     marginRight: 5,
   },
-  barChartPlaceholder: {
+  
+  // --- Bar Chart Placeholder ---
+  barChartContainer: {
     height: 150,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.white,
     borderRadius: 15,
-    padding: 10,
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end', 
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+    marginBottom: 20,
   },
-  placeholderText: {
+  barItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  barWrapper: {
+    width: 20,
+    height: '100%', 
+    backgroundColor: COLORS.background, 
+    borderRadius: 10,
+    overflow: 'hidden',
+    justifyContent: 'flex-end', 
+  },
+  bar: {
+    width: '100%',
+    borderRadius: 10,
+  },
+  barLabel: {
     fontFamily: 'Poppins-Regular',
-    color: COLORS.textGray,
     fontSize: 12,
+    color: COLORS.textGray,
+    marginTop: 5,
   },
+  
   seeMore: {
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
     color: COLORS.textGray,
   },
-  // Latest Activity
+  
+  // --- DESAIN BARU: Latest Activity ---
+  activityListContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    padding: 10,
+    // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
   activityItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.background,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
   },
   activityIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: COLORS.background,
+    width: 50, 
+    height: 50, 
+    borderRadius: 25,
     marginRight: 15,
   },
   activityTextContainer: {
@@ -279,6 +355,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
     color: COLORS.textGray,
+  },
+  placeholderText: {
+    fontFamily: 'Poppins-Regular',
+    color: COLORS.textGray,
+    fontSize: 12,
   },
 });
 

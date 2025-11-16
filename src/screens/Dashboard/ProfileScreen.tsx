@@ -1,11 +1,3 @@
-/**
- * src/screens/Dashboard/ProfileScreen.tsx
- * (PERBAIKAN: Mengintegrasikan API 'getUserProfile' & AsyncStorage)
- *
- * Layar tab 'Profile'.
- * (Kriteria #4, #6, #8)
- */
-
 import React, { useState, useEffect } from 'react'; // (IMPORT BARU)
 import {
   View,
@@ -23,40 +15,21 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import ProfileMenuItem from '../../components/Dashboard/ProfileMenuItem';
 import { MainBottomTabNavigationProp } from '../../navigation/types';
 import LinearGradient from 'react-native-linear-gradient';
-
-// (IMPORT BARU: Import fungsi API & AsyncStorage)
-import { getUserProfile } from '../../api/userApi';
+import { getUserProfile, UserResponse } from '../../api/userApi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// (TIPE BARU: Tipe untuk data pengguna dari API)
-type UserProfileData = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  avatar: string; // URL gambar
-  program: string;
-  height: string;
-  weight: string;
-  dateOfBirth: string; // Kita akan hitung umur dari sini nanti
-};
+// (PERBAIKAN: Hapus tipe 'UserProfileData' lokal)
 
-// Tipe untuk props navigasi
 type Props = {
   navigation: MainBottomTabNavigationProp<'Profile'>;
 };
 
 const ProfileScreen: React.FC<Props> = ({ navigation }) => {
-  // (STATE BARU: Gantikan data 'dummy')
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<UserProfileData | null>(null);
-  
-  // State dummy untuk <Switch>
+  const [userData, setUserData] = useState<UserResponse | null>(null);
   const [isNotifOn, setIsNotifOn] = useState(false);
 
-  // (FUNGSI BARU: Hitung Umur - Kriteria #8 Inovasi)
-  // Fungsi sederhana untuk menghitung umur dari tanggal lahir (YYYY-MM-DD)
-  const getAge = (dateString: string) => {
+  const getAge = (dateString?: string) => { // (PERBAIKAN: Buat opsional)
     if (!dateString) return 'N/A';
     try {
       const birthDate = new Date(dateString);
@@ -79,34 +52,31 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     const loadProfileData = async () => {
       setIsLoading(true);
       try {
-        // 1. Ambil 'userId' dari AsyncStorage (Kriteria #8)
+        // 1. Ambil 'userId' dari AsyncStorage 
         const userId = await AsyncStorage.getItem('userId');
 
         if (userId) {
-          // 2. Panggil API (Kriteria #6)
+          // 2. Panggil API 
           const response = await getUserProfile(userId);
-          // 3. Simpan data asli ke state (Kriteria #4)
+          // 3. Simpan data asli ke state 
           setUserData(response.data);
         } else {
-          // Seharusnya tidak terjadi jika alur login benar
           Alert.alert('Error', 'User ID not found. Please log in again.');
-          // TODO: Navigasi paksa kembali ke Login
-          // navigation.dispatch(
-          //   CommonActions.reset({ index: 0, routes: [{ name: 'AuthStack' }] })
-          // );
         }
       } catch (error: any) {
-        console.error('Failed to fetch profile:', error);
-        Alert.alert('Error', 'Failed to fetch profile data.');
+        // (PERBAIKAN BESAR: Gunakan 'error.message' untuk error detail)
+        const detailedMessage = error.message || 'Failed to fetch profile data.';
+        console.error('Failed to fetch profile (detailed):', detailedMessage);
+        Alert.alert('Error', detailedMessage);
       } finally {
         setIsLoading(false);
       }
     };
 
     loadProfileData();
-  }, []); // [] = Jalankan satu kali saat layar dibuka
+  }, []); 
 
-  // (PERBAIKAN: Tampilkan loading)
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -115,7 +85,6 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
-  // (PERBAIKAN: Tampilkan jika data gagal dimuat)
   if (!userData) {
     return (
       <View style={styles.loadingContainer}>
@@ -124,7 +93,6 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
     );
   }
 
-  // (UI UTAMA: Sekarang menggunakan data asli)
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
@@ -144,15 +112,14 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.profileInfoContainer}>
           <View style={styles.avatarContainer}>
             <Image
-              // (PERBAIKAN: Gunakan 'avatar' dari API)
-              source={{ uri: userData.avatar || 'https://placehold.co/60x60/92A3FD/FFFFFF?text=A' }} 
+              source={{ uri: userData.avatar || 'https://placehold.co/120x120/92A3FD/FFFFFF?text=A' }} 
               style={styles.avatar}
             />
           </View>
           <View style={styles.nameContainer}>
-            {/* (PERBAIKAN: Gunakan 'firstName' + 'lastName' dari API) */}
+            {/* (firstName' + 'lastName' dari API) */}
             <Text style={styles.name}>{userData.firstName} {userData.lastName}</Text>
-            {/* (PERBAIKAN: Gunakan 'program' dari API) */}
+            {/* ('program' dari API) */}
             <Text style={styles.program}>{userData.program || 'Fitness Program'}</Text>
           </View>
           <TouchableOpacity style={styles.editButton}>
@@ -163,17 +130,17 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
         {/* --- Stat Box (Data Asli) --- */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
-            {/* (PERBAIKAN: Gunakan 'height' dari API) */}
-            <Text style={styles.statValue}>{userData.height}cm</Text>
+            {/* ('height' dari API) */}
+            <Text style={styles.statValue}>{userData.height || 'N/A'}cm</Text>
             <Text style={styles.statLabel}>Height</Text>
           </View>
           <View style={styles.statBox}>
-            {/* (PERBAIKAN: Gunakan 'weight' dari API) */}
-            <Text style={styles.statValue}>{userData.weight}kg</Text>
+            {/* ('weight' dari API) */}
+            <Text style={styles.statValue}>{userData.weight || 'N/A'}kg</Text>
             <Text style={styles.statLabel}>Weight</Text>
           </View>
           <View style={styles.statBox}>
-            {/* (PERBAIKAN: Gunakan 'age' dari API) */}
+            {/* ('age' dari API) */}
             <Text style={styles.statValue}>{getAge(userData.dateOfBirth)}</Text>
             <Text style={styles.statLabel}>Age</Text>
           </View>
@@ -208,7 +175,6 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
           <ProfileMenuItem icon="settings-outline" title="Settings" onPress={() => {}} />
         </View>
 
-        {/* Padding Bawah agar tidak tertutup Tab Bar */}
         <View style={{ height: 120 }} />
 
       </ScrollView>
@@ -217,6 +183,7 @@ const ProfileScreen: React.FC<Props> = ({ navigation }) => {
 };
 
 // (STYLES)
+// (STYLES 100% SAMA, TIDAK DIUBAH)
 const styles = StyleSheet.create({
   // (STYLE BARU: Untuk Loading)
   loadingContainer: {

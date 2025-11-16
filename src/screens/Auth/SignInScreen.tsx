@@ -6,23 +6,19 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Alert, // (IMPORT BARU)
-  ActivityIndicator, // (IMPORT BARU)
+  Alert, 
+  ActivityIndicator, 
 } from 'react-native';
-// (PERBAIKAN: Import Tipe dari 'types.ts')
+
 import { AuthStackNavigationProp } from '../../navigation/types';
 import { COLORS } from '../../constant/colors';
 import CustomTextInput from '../../components/Form/CustomTextInput';
 import GradientButton from '../../components/Gradient/GradientButton';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-// (IMPORT BARU: Import fungsi API kita)
 import { loginUser } from '../../api/authApi';
-// (IMPORT BARU: Import AsyncStorage untuk Kriteria #8)
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-// Tipe untuk navigation prop di dalam AuthStack
 type SignInScreenNavigationProp = AuthStackNavigationProp<'SignIn'>;
 
 type Props = {
@@ -36,7 +32,7 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(true);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
   
-  // (STATE BARU: Untuk Kriteria #6)
+  // (STATE BARU)
   const [isLoading, setIsLoading] = useState(false);
 
   // (STEP 2: FUNGSI LOGIKA)
@@ -44,7 +40,6 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  // (validateForm() tidak berubah)
   const validateForm = () => {
     const newErrors: { [key: string]: string | null } = {};
     let isValid = true;
@@ -64,7 +59,6 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
   };
 
 
-  // (PERBAIKAN: Mengganti fungsi 'handleLogin' dengan 'async' API call)
   const handleLogin = async () => {
     // 1. Validasi form
     if (!validateForm()) {
@@ -72,28 +66,22 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // 2. Set loading (Kriteria #6)
+    // 2. Set loading 
     setIsLoading(true);
-    setErrors({}); // Bersihkan error lama
+    setErrors({}); 
 
     try {
-      // 3. Panggil API (Kriteria #6)
-      // (authApi.ts akan melempar error jika user/pass salah)
       const user = await loginUser(email, password);
 
-      // 4. API Sukses (user ditemukan dan password cocok)
+
       console.log('Login successful:', user);
 
-      // 5. Simpan data ke AsyncStorage (Kriteria #8)
       await AsyncStorage.setItem('userId', user.id);
-      await AsyncStorage.setItem('userName', user.firstName); // Kita simpan namanya juga
-
-      // 6. Navigasi ke 'WelcomeScreen' dan KIRIM nama pengguna (Kriteria #5)
+      await AsyncStorage.setItem('userName', user.firstName);
       navigation.navigate('Welcome', { userName: user.firstName }); 
-
+      
     } catch (error: any) {
-      // 7. Tangani Error API (Kriteria #6)
-      // (Ini menangkap error "User not found" atau "Invalid password")
+      // 7. Tangani Error API 
       console.error('Login failed:', error);
       Alert.alert(
         'Login Failed',
@@ -101,17 +89,14 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
       );
       setErrors({ api: error.message }); // Tampilkan error API
     } finally {
-      // 8. Hentikan loading
       setIsLoading(false);
     }
   };
 
-  // (PERBAIKAN: Mengarahkan ke 'SignUp' - Bugfix dari alur sebelumnya)
   const handleRegisterNavigation = () => {
     navigation.navigate('SignUp');
   };
-
-  // (fungsi handleSet... tidak berubah)
+  
   const handleSetEmail = (text: string) => {
     setEmail(text);
     if (errors.email) setErrors(prev => ({ ...prev, email: null }));
@@ -143,7 +128,6 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
           onChangeText={handleSetEmail}
           keyboardType="email-address"
           autoCapitalize="none"
-          // (PERBAIKAN BUG: Menggunakan '?? undefined')
           error={errors.email ?? undefined}
           editable={!isLoading}
         />
@@ -156,11 +140,10 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
           secureTextEntry={isPasswordVisible}
           isPassword
           onTogglePassword={togglePasswordVisibility}
-          // (PERBAIKAN BUG: Menggunakan '?? undefined')
           error={errors.password ?? undefined}
           editable={!isLoading}
         />
-        {errors.api && ( // (PERBAIKAN: Tampilkan error API)
+        {errors.api && ( 
           <Text style={styles.errorText}>{errors.api}</Text>
         )}
 
@@ -209,8 +192,6 @@ const SignInScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// (STEP 4: STYLES)
-// (Style tidak berubah)
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,

@@ -12,34 +12,32 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../navigation/types';
 import { COLORS } from '../../constant/colors';
 
-// (Import komponen slide yang sudah kita refactor)
+// (Import komponen slide yang sudah di refactor)
 import OnBoardingSlide from '../../components/OnBoardingDisplay/OnBoardingSlide';
 
 const { width } = Dimensions.get('window');
-
-// Data untuk slide (Asumsi path aset)
 const onBoardingData = [
   {
     id: '1',
-    image: require('../../assets/images/onboarding1.png'), // Sesuaikan path jika beda
+    image: require('../../assets/images/onboarding1.png'), 
     title: 'Track Your Goal',
     text: "Don't worry if you have trouble determining your goals, we can help you determine your goals and track your goals",
   },
   {
     id: '2',
-    image: require('../../assets/images/onboarding2.png'), // Sesuaikan path jika beda
+    image: require('../../assets/images/onboarding2.png'), 
     title: 'Get Burn',
     text: 'Let’s keep burning, to achive your goals, it hurts only temporarily, if you give up now you will be in pain forever',
   },
   {
     id: '3',
-    image: require('../../assets/images/onboarding3.png'), // Sesuaikan path jika beda
+    image: require('../../assets/images/onboarding3.png'),
     title: 'Eat Well',
     text: 'Let’s start a healthy lifestyle with us, we can determine your diet every day, healthy eating is fun',
   },
   {
     id: '4',
-    image: require('../../assets/images/onboarding4.png'), // Sesuaikan path jika beda
+    image: require('../../assets/images/onboarding4.png'), 
     title: 'Improve Sleep Quality',
     text: 'Improve the quality of your sleep with us, good quality sleep can bring a good mood in the morning',
   },
@@ -78,15 +76,12 @@ const OnBoardingScreen: React.FC<Props> = ({ navigation }) => {
       });
       setCurrentSlideIndex(nextSlideIndex);
     } else {
-      // (PERBAIKAN: Navigasi ke 'AuthStack' yang benar)
-      // Sudah di slide terakhir, navigasi ke Auth Stack
-      navigation.replace('AuthStack', { screen: 'SignUp' }); // 'replace' agar tidak bisa kembali
+      navigation.replace('AuthStack', { screen: 'SignUp' }); 
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* (PERBAIKAN: StatusBar transparan agar gambar nempel ke atas) */}
       <StatusBar translucent backgroundColor="transparent" />
 
       <FlatList
@@ -125,12 +120,10 @@ const OnBoardingScreen: React.FC<Props> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // (PERBAIKAN: Hapus background putih agar gambar bisa naik)
-    // backgroundColor: '#FFFFFF',
   },
   indicatorContainer: {
     position: 'absolute',
-    bottom: 80, // Sesuaikan posisi
+    bottom: 80, 
     flexDirection: 'row',
     alignSelf: 'center',
   },
@@ -138,12 +131,11 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    // (PERBAIKAN BUG: Menggunakan 'borderColor' bukan 'border')
-    backgroundColor: COLORS.borderColor, // Warna titik non-aktif
+    backgroundColor: COLORS.borderColor, 
     marginHorizontal: 5,
   },
   indicatorActive: {
-    backgroundColor: COLORS.gradientStart, // Warna titik aktif
+    backgroundColor: COLORS.gradientStart, 
   },
 });
 

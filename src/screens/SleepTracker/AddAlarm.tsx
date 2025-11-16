@@ -1,10 +1,3 @@
-/**
- * src/screens/Dashboard/AddAlarm.tsx
- * (VERSI FINAL LENGKAP - PERBAIKAN 'immersive content')
- *
- * (PERBAIKAN: Menambahkan import ScrollView)
- */
-
 import React, { useState } from 'react';
 import {
   View,
@@ -13,14 +6,14 @@ import {
   StatusBar,
   TouchableOpacity,
   Switch,
-  ScrollView, // (PERBAIKAN: Impor ScrollView)
+  ScrollView, 
 } from 'react-native';
 import { COLORS } from '../../constant/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { SleepStackNavigationProp } from '../../navigation/types';
 import GradientButton from '../../components/Gradient/GradientButton';
 
-// Tipe untuk props navigasi
+
 type Props = {
   navigation: SleepStackNavigationProp<'AddAlarm'>;
 };
@@ -29,9 +22,7 @@ const AddAlarmScreen: React.FC<Props> = ({ navigation }) => {
   const [vibrate, setVibrate] = useState(false);
   
   const handleAddAlarm = () => {
-    // TODO: Simpan data alarm baru (via Context atau AsyncStorage)
     console.log('Alarm baru ditambahkan');
-    // Kembali ke layar sebelumnya
     navigation.goBack();
   };
 
@@ -54,7 +45,6 @@ const AddAlarmScreen: React.FC<Props> = ({ navigation }) => {
         
         {/* --- Card Form --- */}
         <View style={styles.formCard}>
-          {/* TODO: Implementasikan Time Picker di sini */}
           <Text style={styles.timePickerText}>09:00 PM</Text>
         </View>
 
@@ -113,11 +103,10 @@ const AddAlarmScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// (STYLES)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background, // Background abu-abu
+    backgroundColor: COLORS.background, 
   },
   // Header
   header: {

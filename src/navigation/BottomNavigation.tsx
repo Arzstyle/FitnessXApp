@@ -1,15 +1,7 @@
-/**
- * src/navigation/BottomTabNavigator.tsx
- * (VERSI FINAL LENGKAP - PERBAIKAN 'immersive content')
- *
- * (PERBAIKAN: Mengganti 'WorkOutPlaceholder' dengan 'WorkOutStackNavigator')
- */
-
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-
 import Icon from 'react-native-vector-icons/Ionicons';
 import LinearGradient from 'react-native-linear-gradient';
 import { COLORS } from '../constant/colors';
@@ -17,7 +9,7 @@ import {
   MainBottomTabParamList, 
   HomeStackParamList,
   SleepStackParamList,
-  WorkOutStackParamList // (IMPORT BARU)
+  WorkOutStackParamList 
 } from './types';
 
 // (IMPORT LAYAR 'HOME' STACK)
@@ -39,7 +31,7 @@ import ExerciseDetailScreen from '../screens/WorkOut/ExerciseDetail';
 import ProfileScreen from '../screens/Dashboard/ProfileScreen';
 
 
-// (STEP 1: BUAT STACK UNTUK 'HOME')
+// (BUAT STACK UNTUK 'HOME')
 const HomeStack = createStackNavigator<HomeStackParamList>();
 const HomeStackNavigator: React.FC = () => {
   return (
@@ -51,7 +43,7 @@ const HomeStackNavigator: React.FC = () => {
   );
 };
 
-// (STEP 2: BUAT STACK UNTUK 'SLEEP')
+// (BUAT STACK UNTUK 'SLEEP')
 const SleepStack = createStackNavigator<SleepStackParamList>();
 const SleepStackNavigator: React.FC = () => {
   return (
@@ -63,7 +55,7 @@ const SleepStackNavigator: React.FC = () => {
   );
 };
 
-// (STEP 3: BUAT STACK UNTUK 'WORKOUT')
+// (BUAT STACK UNTUK 'WORKOUT')
 const WorkOutStack = createStackNavigator<WorkOutStackParamList>();
 const WorkOutStackNavigator: React.FC = () => {
   return (
@@ -78,7 +70,7 @@ const WorkOutStackNavigator: React.FC = () => {
 
 const Tab = createBottomTabNavigator<MainBottomTabParamList>();
 
-// (STEP 4: BUAT TOMBOL "FITUR" MENGAMBANG)
+// (BUAT TOMBOL "FITUR" MENGAMBANG)
 const CustomTabBarButton: React.FC<{
   children: React.ReactNode;
   onPress?: (e?: any) => void;
@@ -97,7 +89,7 @@ const CustomTabBarButton: React.FC<{
   </TouchableOpacity>
 );
 
-// (STEP 5: BUAT KOMPONEN BOTTOM TAB NAVIGATOR)
+// (BUAT KOMPONEN BOTTOM TAB NAVIGATOR)
 const BottomTabNavigator: React.FC = () => {
   return (
     <Tab.Navigator
@@ -132,16 +124,16 @@ const BottomTabNavigator: React.FC = () => {
       {/* (PERBAIKAN: Tab 'WorkOut' sekarang berisi Stack) */}
       <Tab.Screen 
         name="WorkOut" 
-        component={WorkOutStackNavigator} // <-- Sudah diganti
+        component={WorkOutStackNavigator} 
       />
 
       {/* Tombol Fitur Mengambang */}
       <Tab.Screen
         name="Fitur"
-        component={HomeStackNavigator} // Komponen dummy (tidak masalah)
+        component={HomeStackNavigator} // Komponen dummy 
         options={{
           tabBarIcon: ({ focused }) => (
-            <Icon name="add" size={30} color={COLORS.white} />
+            <Icon name="scan" size={30} color={COLORS.white} />
           ),
           tabBarButton: (props) => (
             <CustomTabBarButton onPress={props.onPress}>
@@ -172,7 +164,6 @@ const BottomTabNavigator: React.FC = () => {
   );
 };
 
-// (STEP 6: STYLES)
 const styles = StyleSheet.create({
   placeholder: {
     flex: 1,

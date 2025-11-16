@@ -1,10 +1,3 @@
-/**
- * src/screens/Auth/CompleteProfile.tsx
- * (VERSI FINAL LENGKAP - PERBAIKAN 'immersive content')
- *
- * (PERBAIKAN: Menerima 'userId' dari 'SignUpScreen' & memanggil API)
- */
-
 import React, { useState } from 'react';
 import {
   View,
@@ -13,27 +6,22 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
-  Alert, // Placeholder
-  ActivityIndicator, // (IMPORT BARU)
+  Alert, 
+  ActivityIndicator, 
 } from 'react-native';
-// (PERBAIKAN: Import Tipe dari 'types.ts')
+
 import { 
   AuthStackNavigationProp,
-  AuthStackRouteProp // (IMPORT BARU)
+  AuthStackRouteProp 
 } from '../../navigation/types';
 import { COLORS } from '../../constant/colors';
 import CustomTextInput from '../../components/Form/CustomTextInput';
 import GradientButton from '../../components/Gradient/GradientButton';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-// (IMPORT BARU: Import fungsi API kita)
-import { updateUserProfile } from '../../api/userApi';
+import { updateUserProfile, UpdateUserPayload } from '../../api/userApi';
 
 
-// Tipe untuk navigation prop
 type CompleteProfileNavigationProp = AuthStackNavigationProp<'CompleteProfile'>;
-
-// (TIPE BARU: Tipe untuk route prop agar bisa 'menerima' userId)
 type CompleteProfileRouteProp = AuthStackRouteProp<'CompleteProfile'>;
 
 type Props = {
@@ -41,13 +29,8 @@ type Props = {
   route: CompleteProfileRouteProp; // (PERBAIKAN: Tambahkan route)
 };
 
-// (Tipe FormData & FormErrors tidak berubah)
-type FormData = {
-  gender: 'male' | 'female' | null;
-  dateOfBirth: string;
-  weight: string;
-  height: string;
-};
+type FormData = UpdateUserPayload;
+
 type FormErrors = {
   gender?: string | null;
   dateOfBirth?: string | null;
@@ -57,7 +40,6 @@ type FormErrors = {
 
 
 const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
-  // (PERBAIKAN: Ambil 'userId' yang dikirim dari SignUpScreen)
   const { userId } = route.params;
 
   // (STEP 1: LOGIKA STATE)
@@ -75,9 +57,9 @@ const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
 
   // (STEP 2: FUNGSI LOGIKA)
 
-  // (handleFormChange & validateForm tidak berubah)
   const handleFormChange = (field: keyof FormData, value: string | null) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    const finalValue = field === 'gender' ? value : (value ?? '');
+    setFormData(prev => ({ ...prev, [field]: finalValue }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: null }));
     }
@@ -106,7 +88,6 @@ const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
   };
 
 
-  // (PERBAIKAN: Mengganti fungsi 'handleNext' dengan 'async' API call)
   const handleNext = async () => {
     // 1. Validasi form
     if (!validateForm()) {
@@ -116,25 +97,30 @@ const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
 
     // 2. Set loading (Kriteria #6)
     setIsLoading(true);
-    setErrors({}); // Bersihkan error lama
+    setErrors({}); 
 
     try {
-      // 3. Panggil API (Kriteria #6)
-      // (PERBAIKAN: Kirim 'userId' yang kita terima)
+      // 3. Panggil API 
       const response = await updateUserProfile(userId, formData);
 
       // 4. API Sukses
       console.log('Profile updated successfully:', response.data);
 
-      // 5. Navigasi ke 'SignIn' (Sesuai alur baru kita)
-      navigation.navigate('SignIn');
+      // 5. Navigasi ke 'SignIn'
+      Alert.alert(
+        'Success!',
+        'Your profile is complete. Please log in.',
+        [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
+      );
 
     } catch (error: any) {
-      // 6. Tangani Error API (Kriteria #6)
-      console.error('Profile update failed:', error);
+      // 6. Tangani Error API
+      const detailedMessage = error.message || 'An unknown error occurred.';
+      
+      console.error('Profile update failed (detailed):', detailedMessage);
       Alert.alert(
         'Update Failed',
-        error.response?.data?.message || 'An error occurred. Please try again.'
+        detailedMessage
       );
     } finally {
       // 7. Hentikan loading
@@ -142,10 +128,7 @@ const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
     }
   };
 
-  // (handleOpenDatePicker tidak berubah)
   const handleOpenDatePicker = () => {
-    // TODO: Implementasikan modal Date Picker (e.g., @react-native-community/datetimepicker)
-    // Untuk saat ini, kita set manual
     handleFormChange('dateOfBirth', '1990-01-01'); // Contoh
     Alert.alert('Date Picker', 'Date picker will be implemented here.');
   };
@@ -251,7 +234,6 @@ const CompleteProfileScreen: React.FC<Props> = ({ navigation, route }) => {
 };
 
 // (STEP 4: STYLES)
-// (Style tidak berubah)
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
@@ -267,7 +249,6 @@ const styles = StyleSheet.create({
   headerPlaceholder: {
     alignItems: 'center',
     marginBottom: 30,
-    // TODO: Tambahkan ilustrasi di atas ini
   },
   headerTitle: {
     fontSize: 24,

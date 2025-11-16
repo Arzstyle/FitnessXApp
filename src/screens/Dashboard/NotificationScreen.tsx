@@ -1,11 +1,3 @@
-/**
- * src/screens/Dashboard/NotificationScreen.tsx
- * (VERSI FINAL LENGKAP - PERBAIKAN 'immersive content')
- *
- * Layar untuk menampilkan notifikasi.
- * Dibuka dari tombol lonceng di Home.tsx.
- */
-
 import React from 'react';
 import {
   View,
@@ -42,7 +34,7 @@ const NotificationScreen: React.FC<Props> = ({ navigation }) => {
           <Icon name="chevron-back-outline" size={24} color={COLORS.textBlack} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notification</Text>
-        <View style={styles.headerButton} /> {/* Placeholder agar judul tetap di tengah */}
+        <View style={styles.headerButton} /> 
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>

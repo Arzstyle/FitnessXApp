@@ -6,24 +6,24 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  Image, 
 } from 'react-native';
 import { COLORS } from '../../constant/colors';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { WorkOutStackNavigationProp } from '../../navigation/types';
 import GradientButton from '../../components/Gradient/GradientButton';
 
-// Tipe untuk props navigasi
 type Props = {
   navigation: WorkOutStackNavigationProp<'ExerciseDetail'>;
-  route: { params: { exerciseId: string } }; // Menerima ID Latihan
+  route: { params: { exerciseId: string } };
 };
 
 // Data dummy
 const steps = [
-  { id: '1', title: 'Spread Your Arms' },
-  { id: '2', title: 'Rest at The Toe' },
-  { id: '3', title: 'Adjust Foot Movement' },
-  { id: '4', title: 'Clapping Both Hands' },
+  { id: '1', title: 'Spread Your Arms', desc: 'To make the gestures feel more relaxed, stretch your arms as you start this movement. No bending of hands.' },
+  { id: '2', title: 'Rest at The Toe', desc: 'The basis of this movement is jumping. Now, what needs to be considered is that you have to use the tips of your feet.' },
+  { id: '3', title: 'Adjust Foot Movement', desc: 'Jumping Jack is not just an ordinary jump. But, you also have to pay close attention to leg movements.' },
+  { id: '4.a', title: 'Clapping Both Hands', desc: 'This cannot be taken lightly. You see, without realizing it, the clapping of your hands helps you to keep your rhythm while doing the Jumping Jack.' },
 ];
 
 const ExerciseDetailScreen: React.FC<Props> = ({ navigation, route }) => {
@@ -33,25 +33,29 @@ const ExerciseDetailScreen: React.FC<Props> = ({ navigation, route }) => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
       
-      {/* --- Header Kustom --- */}
+      {/* --- Header Kustom (Desain Baru) --- */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
-          <Icon name="close-outline" size={24} color={COLORS.textBlack} />
+          <Icon name="close" size={20} color={COLORS.textBlack} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.headerButton}>
-          <Icon name="ellipsis-horizontal" size={24} color={COLORS.textBlack} />
+          <Icon name="ellipsis-horizontal" size={20} color={COLORS.textBlack} />
         </TouchableOpacity>
       </View>
       
       {/* Konten ditaruh di ScrollView */}
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         
-        {/* --- Video/Image Placeholder --- */}
+        {/* --- Video/Image Placeholder (Desain Baru) --- */}
         <View style={styles.videoPlaceholder}>
-          <Text style={styles.placeholderText}>Video Latihan (Jumping Jack)</Text>
-          <View style={styles.playButton}>
+          <Image 
+            source={require('../../assets/images/workout-detail-dummy.png')}
+            style={styles.videoImage}
+            resizeMode="cover"
+          />
+          <TouchableOpacity style={styles.playButton}>
             <Icon name="play" size={20} color={COLORS.white} />
-          </View>
+          </TouchableOpacity>
         </View>
         
         <Text style={styles.title}>Jumping Jack</Text>
@@ -64,34 +68,58 @@ const ExerciseDetailScreen: React.FC<Props> = ({ navigation, route }) => {
           <Text style={styles.readMore}> Read More</Text>
         </Text>
 
-        {/* --- How To Do It --- */}
-        <Text style={styles.sectionTitle}>How To Do It</Text>
-        {steps.map((step) => (
+        {/* --- How To Do It (Desain Baru) --- */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>How To Do It</Text>
+          <Text style={styles.sectionSubtitle}>4 Steps</Text>
+        </View>
+
+        {steps.map((step, index) => (
           <View key={step.id} style={styles.stepItem}>
-            {/* TODO: Ganti dengan Step/Timeline Indicator kustom */}
-            <View style={styles.stepNumber}>
-              <Text style={styles.stepNumberText}>{step.id}</Text>
+            {/* (Bagian Timeline: Garis & Bulatan) */}
+            <View style={styles.stepTimeline}>
+              <View style={styles.stepBullet}>
+                <Text style={styles.stepNumberText}>0{index + 1}</Text>
+              </View>
+              {index < steps.length - 1 && <View style={styles.stepLine} />}
             </View>
+            
+            {/* (Bagian Teks) */}
             <View style={styles.stepTextContainer}>
               <Text style={styles.stepTitle}>{step.title}</Text>
-              <Text style={styles.stepSubtitle}>Step description...</Text>
+              <Text style={styles.stepSubtitle}>{step.desc}</Text>
             </View>
           </View>
         ))}
 
         {/* --- Custom Repetitions --- */}
         <Text style={styles.sectionTitle}>Custom Repetitions</Text>
-        {/* TODO: Implementasikan + / - counter */}
-        <View style={styles.repItem}>
-          <Text style={styles.repText}>30 times</Text>
+        
+        {/* Placeholder  */}
+        <View style={styles.repContainer}>
+          <View style={styles.repItem}>
+            <Icon name="flame" size={16} color={COLORS.danger} style={styles.repIcon} />
+            <Text style={styles.repLabel}>450 Calories Burn</Text>
+            <Text style={styles.repValue}>29</Text>
+          </View>
+          <View style={[styles.repItem, styles.repItemActive]}>
+            <Icon name="flame" size={16} color={COLORS.white} style={styles.repIcon} />
+            <Text style={[styles.repLabel, styles.repLabelActive]}>450 Calories Burn</Text>
+            <Text style={[styles.repValue, styles.repValueActive]}>30 times</Text>
+          </View>
+          <View style={styles.repItem}>
+            <Icon name="flame" size={16} color={COLORS.danger} style={styles.repIcon} />
+            <Text style={styles.repLabel}>450 Calories Burn</Text>
+            <Text style={styles.repValue}>31</Text>
+          </View>
         </View>
 
-        {/* Padding Bawah */}
-        <View style={{ height: 100 }} /> 
+        {/* Padding Bawah untuk tombol floating */}
+        <View style={{ height: 120 }} /> 
         
       </ScrollView>
       
-      {/* Tombol Save (Mengambang) */}
+      {/* Tombol Save (Mengambang) (Desain Baru) */}
       <View style={styles.saveButtonContainer}>
         <GradientButton text="Save" onPress={() => navigation.goBack()} />
       </View>
@@ -99,7 +127,6 @@ const ExerciseDetailScreen: React.FC<Props> = ({ navigation, route }) => {
   );
 };
 
-// (STYLES)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -116,34 +143,37 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   headerButton: {
-    width: 40,
-    height: 40,
+    width: 35, 
+    height: 35, 
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: COLORS.background, 
+    borderRadius: 18, 
   },
   // Scroll
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 40,
+    paddingBottom: 40, 
   },
   // Video
   videoPlaceholder: {
-    height: 180,
+    height: 200, 
     backgroundColor: COLORS.background,
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
+    overflow: 'hidden', 
   },
-  placeholderText: {
-    fontFamily: 'Poppins-Regular',
-    color: COLORS.textGray,
+  videoImage: {
+    width: '100%',
+    height: '100%',
   },
   playButton: {
     position: 'absolute',
-    padding: 15,
+    padding: 18,
     borderRadius: 30,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   // Teks Judul
   title: {
@@ -163,6 +193,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: COLORS.textBlack,
     marginBottom: 10,
+    marginTop: 15, 
+  },
+  sectionHeader: { 
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  sectionSubtitle: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: COLORS.textGray,
   },
   descriptionText: {
     fontFamily: 'Poppins-Regular',
@@ -174,24 +216,38 @@ const styles = StyleSheet.create({
     color: COLORS.gradientStart,
     fontFamily: 'Poppins-SemiBold',
   },
-  // Steps
+  // Steps 
   stepItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     marginBottom: 15,
   },
-  stepNumber: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: COLORS.gradientStart,
-    justifyContent: 'center',
+  stepTimeline: {
+    width: 20,
     alignItems: 'center',
     marginRight: 15,
   },
+  stepBullet: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: 'rgba(197, 139, 242, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
   stepNumberText: {
-    color: COLORS.white,
     fontFamily: 'Poppins-SemiBold',
+    fontSize: 10,
+    color: COLORS.gradientStart,
+  },
+  stepLine: {
+    flex: 1,
+    width: 2,
+    backgroundColor: 'rgba(197, 139, 242, 0.3)', 
+    borderStyle: 'dashed', 
+    marginTop: -5,
+    marginBottom: -5,
   },
   stepTextContainer: {
     flex: 1,
@@ -205,29 +261,65 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
     color: COLORS.textGray,
+    marginTop: 3,
   },
-  // Reps
+  // Reps 
+  repContainer: {
+  },
   repItem: {
-    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 15,
     backgroundColor: COLORS.background,
     borderRadius: 15,
-    alignItems: 'center',
+    marginBottom: 10,
   },
-  repText: {
+  repItemActive: {
+    backgroundColor: 'rgba(197, 139, 242, 0.2)', 
+  },
+  repIcon: {
+    marginRight: 10,
+  },
+  repLabel: {
+    flex: 1,
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: COLORS.textGray,
+  },
+  repLabelActive: {
+    color: COLORS.gradientStart,
     fontFamily: 'Poppins-SemiBold',
+  },
+  repValue: {
+    fontFamily: 'Poppins-Bold',
     fontSize: 16,
     color: COLORS.textBlack,
   },
-  // Tombol Save
+  repValueActive: {
+    color: COLORS.gradientStart,
+  },
+  
+  // Tombol Save (Floating)
   saveButtonContainer: {
-    position: 'absolute',
+    position: 'absolute', 
     bottom: 0,
     left: 0,
     right: 0,
     padding: 20,
+    paddingBottom: 30, 
     backgroundColor: COLORS.white,
     borderTopWidth: 1,
     borderTopColor: COLORS.background,
+    // Shadow
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  placeholderText: { 
+    fontFamily: 'Poppins-Regular',
+    color: COLORS.textGray,
   },
 });
 

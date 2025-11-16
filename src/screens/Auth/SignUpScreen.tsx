@@ -13,16 +13,13 @@ import {
   ScrollView,
   Alert,
   StatusBar,
-  ActivityIndicator, // (IMPORT BARU)
+  ActivityIndicator,
 } from 'react-native';
-// (PERBAIKAN: Import Tipe dari 'types.ts')
 import { AuthStackNavigationProp } from '../../navigation/types';
 import { COLORS } from '../../constant/colors';
 import CustomTextInput from '../../components/Form/CustomTextInput';
 import GradientButton from '../../components/Gradient/GradientButton';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-// (IMPORT BARU: Import fungsi API kita)
 import { registerUser } from '../../api/authApi';
 
 
@@ -53,9 +50,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
 
   const validateForm = () => {
     // ... (Validasi form tetap sama) ...
-// (PERBAIKAN BUG: Menggunakan '?? undefined')
-// ... (Bagian validateForm() tetap sama) ...
-// ... (fungsi validateForm() tidak berubah) ...
     const newErrors: { [key: string]: string | null } = {};
     let isValid = true;
     if (!firstName) {
@@ -88,7 +82,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
     return isValid;
   };
 
-  // (PERBAIKAN: Mengganti fungsi 'handleRegister' dengan 'async' API call)
+  // Mengganti fungsi 'handleRegister' dengan 'async' API call
   const handleRegister = async () => {
     // 1. Validasi form
     if (!validateForm()) {
@@ -96,9 +90,9 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       return;
     }
 
-    // 2. Set loading (Kriteria #6)
+    // 2. Set loading 
     setIsLoading(true);
-    setErrors({}); // Bersihkan error lama
+    setErrors({}); 
 
     try {
       // 3. Panggil API (Kriteria #6)
@@ -117,26 +111,25 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
       navigation.navigate('CompleteProfile', { userId: newUser.id });
 
     } catch (error: any) {
-      // 6. Tangani Error API (Kriteria #6)
-      console.error('Registration failed:', error);
+      const detailedMessage = error.message || 'An unknown error occurred.';
+
+      console.error('Registration failed (detailed):', detailedMessage);
+      
       Alert.alert(
         'Registration Failed',
-        error.response?.data?.message || 'An error occurred. Please try again.'
+        detailedMessage
       );
-      setErrors({ api: 'Registration failed' }); // Error umum
+      setErrors({ api: detailedMessage }); 
     } finally {
       // 7. Hentikan loading
       setIsLoading(false);
     }
   };
 
-  // (PERBAIKAN: Mengarahkan ke 'SignIn' - Bugfix dari alur sebelumnya)
   const handleLoginNavigation = () => {
     navigation.navigate('SignIn');
   };
 
-  // ... (Fungsi handleSet... tetap sama) ...
-// ... (fungsi handleSet... tidak berubah) ...
   const handleSetFirstName = (text: string) => {
     setFirstName(text);
     if (errors.firstName) setErrors(prev => ({ ...prev, firstName: null }));
@@ -178,7 +171,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
           placeholder="Enter your first name"
           value={firstName}
           onChangeText={handleSetFirstName}
-          // (PERBAIKAN BUG: Menggunakan '?? undefined')
           error={errors.firstName ?? undefined}
         />
         <CustomTextInput
@@ -231,7 +223,7 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
         {errors.privacy && (
           <Text style={styles.errorText}>{errors.privacy}</Text>
         )}
-        {errors.api && ( // (PERBAIKAN: Tampilkan error API)
+        {errors.api && ( 
           <Text style={styles.errorText}>{errors.api}</Text>
         )}
 
@@ -274,7 +266,6 @@ const SignUpScreen: React.FC<Props> = ({ navigation }) => {
   );
 };
 
-// (STEP 4: STYLES)
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,

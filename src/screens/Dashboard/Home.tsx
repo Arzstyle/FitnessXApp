@@ -1,11 +1,4 @@
-/**
- * src/screens/Dashboard/Home.tsx
- * (VERSI FINAL LENGKAP - PERBAIKAN 'immersive content')
- *
- * (PERBAIKAN: Tombol lonceng sekarang mengarah ke 'Notification')
- */
-
-import React from 'react';
+import React, { useState, useEffect } from 'react'; // (PERBAIKAN: Import state & effect)
 import {
   View,
   Text,
@@ -18,31 +11,49 @@ import {
 import { COLORS } from '../../constant/colors';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
-// (PERBAIKAN: Import Tipe Navigasi yang baru)
 import { HomeStackNavigationProp } from '../../navigation/types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Tipe untuk props navigasi
+
+
 type Props = {
-  // (PERBAIKAN: Tipe 'HomeDashboard' dari HomeStack)
   navigation: HomeStackNavigationProp<'HomeDashboard'>;
 };
 
 // Data dummy untuk 'Latest Workout'
 const latestWorkouts = [
-  { id: '1', title: 'Fullbody Workout', calories: '180', time: '20' },
-  { id: '2', title: 'Lowerbody Workout', calories: '200', time: '30' },
+  { id: '1', title: 'Fullbody Workout', calories: '180', time: '20', image: require('../../assets/images/dummy-avatar1.png') },
+  { id: '2', title: 'Lowerbody Workout', calories: '200', time: '30', image: require('../../assets/images/dummy-avatar2.png') },
 ];
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
+
+  // (STATE BARU: Untuk 'firstName' dari AsyncStorage)
+  const [userName, setUserName] = useState('Guest');
+
+  // (FUNGSI BARU: Ambil nama saat layar dibuka - TIDAK BERUBAH)
+  useEffect(() => {
+    const fetchUserName = async () => {
+      try {
+        // Ambil 'userName' yang kita simpan saat Login
+        const name = await AsyncStorage.getItem('userName');
+        if (name) {
+          setUserName(name);
+        }
+      } catch (e) {
+        console.error('Failed to fetch user name from storage', e);
+      }
+    };
+    fetchUserName();
+  }, []); 
   
-  // (FUNGSI NAVIGASI)
+
+
   const goToActivityTracker = () => {
-    // Sesuai alur Anda: Home -> ActivityTracker
     navigation.navigate('ActivityTracker');
   };
 
   const goToNotification = () => {
-    // (PERBAIKAN: Arahkan ke 'Notification')
     navigation.navigate('Notification');
   };
   
@@ -54,50 +65,73 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       <View style={styles.header}>
         <View>
           <Text style={styles.welcomeText}>Welcome Back,</Text>
-          <Text style={styles.userName}>Stefani Wong</Text>
+          <Text style={styles.userName}>{userName}</Text>
         </View>
         <TouchableOpacity style={styles.notifButton} onPress={goToNotification}>
-          <Icon name="notifications-outline" size={24} color={COLORS.textBlack} />
+          <Icon name="notifications-outline" size={20} color={COLORS.textBlack} />
         </TouchableOpacity>
       </View>
 
-      {/* --- Kartu BMI (Contoh) --- */}
+      {/* --- Kartu BMI --- */}
       <LinearGradient
-        colors={['#C58BF2', '#EEA4CE']} // Warna dummy
+        colors={['#92A3FD', '#9DCEFF']} 
         style={styles.bmiCard}
       >
-        <Text style={styles.bmiTitle}>BMI (Body Mass Index)</Text>
-        <Text style={styles.bmiSubtitle}>You have a normal weight</Text>
-        <TouchableOpacity style={styles.viewMoreButton}>
-          <Text style={styles.viewMoreText}>View More</Text>
-        </TouchableOpacity>
-        {/* TODO: Tambahkan Lingkaran BMI Chart di sini */}
+        <View style={styles.bmiTextContainer}>
+          <Text style={styles.bmiTitle}>BMI (Body Mass Index)</Text>
+          <Text style={styles.bmiSubtitle}>You have a normal weight</Text>
+          <TouchableOpacity style={styles.viewMoreButton}>
+            <Text style={styles.viewMoreText}>View More</Text>
+          </TouchableOpacity>
+        </View>
+        {/* Placeholder Lingkaran BMI Chart */}
+        <View style={styles.bmiChartContainer}>
+          <Image 
+            source={require('../../assets/images/bmi-chart-dummy.png')}
+            style={styles.bmiChartImage}
+            resizeMode="contain"
+          />
+        </View>
       </LinearGradient>
 
-      {/* --- Activity Tracker Card (Sesuai Rencana) --- */}
-      {/* (PERBAIKAN: Ganti nama 'Activity Status' -> 'Activity Tracker') */}
+      {/* --- Today Target  --- */}
+      <View style={styles.targetCard}>
+        <Text style={styles.targetTitle}>Today Target</Text>
+        <TouchableOpacity style={styles.checkButton}> 
+          <Text style={styles.checkButtonText}>Check</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* --- Activity Tracker Card --- */}
       <TouchableOpacity 
         style={styles.activityCard} 
         onPress={goToActivityTracker}
         activeOpacity={0.7}
       >
         <Text style={styles.sectionTitle}>Activity Tracker</Text>
-        {/* TODO: Tambahkan Grafik Garis (Line Chart) di sini */}
         <View style={styles.chartPlaceholder}>
-          <Text style={styles.placeholderText}>Grafik Denyut Jantung (Heart Rate)</Text>
+          <Image 
+            source={require('../../assets/images/activity-tracker.png')} 
+            style={styles.chartImage} 
+            resizeMode="contain" 
+          />
         </View>
       </TouchableOpacity>
       
       {/* --- Workout Progress --- */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Workout Progress</Text>
-        <TouchableOpacity>
-          <Text style={styles.seeMore}>See more</Text>
+        <TouchableOpacity style={styles.dropdownButton}>
+          <Text style={styles.dropdownText}>Weekly</Text>
+          <Icon name="chevron-down-outline" size={16} color={COLORS.white} />
         </TouchableOpacity>
       </View>
-      {/* TODO: Tambahkan Grafik Progress (Bar Chart) di sini */}
       <View style={styles.chartPlaceholder}>
-        <Text style={styles.placeholderText}>Grafik Progress Latihan (Mingguan)</Text>
+        <Image 
+          source={require('../../assets/images/workout-progress.png')} 
+          style={styles.chartImage} 
+          resizeMode="contain" 
+        />
       </View>
       
       {/* --- Latest Workout --- */}
@@ -110,24 +144,27 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       
       {latestWorkouts.map((workout) => (
         <TouchableOpacity key={workout.id} style={styles.workoutItem}>
-          <View style={styles.workoutIcon}></View>
+          <Image 
+            source={workout.image}
+            style={styles.workoutIcon}
+          />
           <View style={styles.workoutTextContainer}>
             <Text style={styles.workoutTitle}>{workout.title}</Text>
             <Text style={styles.workoutSubtitle}>
               {workout.calories} Calories Burn | {workout.time} min
             </Text>
           </View>
-          <Icon name="chevron-forward-outline" size={20} color={COLORS.textGray} />
+          <TouchableOpacity style={styles.workoutArrowButton}>
+            <Icon name="chevron-forward-outline" size={20} color={COLORS.gradientStart} />
+          </TouchableOpacity>
         </TouchableOpacity>
       ))}
 
-      {/* Padding Bawah agar tidak tertutup Tab Bar */}
-      <View style={{ height: 120 }} /> 
+      <View style={{ height: 40 }} /> 
     </ScrollView>
   );
 };
 
-// (STYLES)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -153,9 +190,9 @@ const styles = StyleSheet.create({
     color: COLORS.textBlack,
   },
   notifButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
+    width: 35, 
+    height: 35, 
+    borderRadius: 18, 
     backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
@@ -165,6 +202,11 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     marginBottom: 20,
+    flexDirection: 'row', 
+    alignItems: 'center', 
+  },
+  bmiTextContainer: { 
+    flex: 1,
   },
   bmiTitle: {
     fontFamily: 'Poppins-SemiBold',
@@ -178,7 +220,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   viewMoreButton: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(255, 255, 255, 0.3)', 
     paddingHorizontal: 15,
     paddingVertical: 5,
     borderRadius: 10,
@@ -187,18 +229,54 @@ const styles = StyleSheet.create({
   viewMoreText: {
     fontFamily: 'Poppins-SemiBold',
     fontSize: 10,
-    color: COLORS.gradientStart,
+    color: COLORS.white, 
+  },
+  bmiChartContainer: { 
+    width: 80,
+    height: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  bmiChartImage: { 
+    width: '100%',
+    height: '100%',
+  },
+
+  targetCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: 'rgba(197, 139, 242, 0.1)',
+    borderRadius: 15,
+    marginBottom: 20,
+  },
+  targetTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 16,
+    color: COLORS.textBlack,
+  },
+  checkButton: {
+    backgroundColor: 'rgba(197, 139, 242, 0.2)', 
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  checkButtonText: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 12,
+    color: COLORS.gradientStart, // Teks ungu
   },
   // Kartu Activity
   activityCard: {
-    backgroundColor: COLORS.white,
+    backgroundColor: 'rgba(238, 164, 206, 0.1)', 
     padding: 20,
     borderRadius: 20,
     marginBottom: 20,
     // Shadow
-    shadowColor: '#000',
+    shadowColor: '#EEA4CE',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 2,
   },
@@ -208,18 +286,18 @@ const styles = StyleSheet.create({
     color: COLORS.textBlack,
   },
   chartPlaceholder: {
-    height: 100,
+    height: 140, 
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: COLORS.background,
+    backgroundColor: COLORS.background, 
     borderRadius: 15,
-    padding: 10,
     marginTop: 10,
+    overflow: 'hidden', 
   },
-  placeholderText: {
-    fontFamily: 'Poppins-Regular',
-    color: COLORS.textGray,
-    fontSize: 12,
+  chartImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 15,
   },
   // Section Lain
   sectionHeader: {
@@ -227,6 +305,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 15,
+  },
+  dropdownButton: { 
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(197, 139, 242, 0.2)', 
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
+  dropdownText: { 
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    color: COLORS.gradientStart, 
+    marginRight: 5,
   },
   seeMore: {
     fontFamily: 'Poppins-Regular',
@@ -252,7 +344,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: COLORS.background,
     marginRight: 15,
   },
   workoutTextContainer: {
@@ -267,6 +358,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Regular',
     fontSize: 12,
     color: COLORS.textGray,
+  },
+  workoutArrowButton: { 
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(197, 139, 242, 0.1)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

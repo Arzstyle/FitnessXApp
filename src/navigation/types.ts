@@ -5,16 +5,15 @@
  * (PERBAIKAN: 'CompleteProfile' sekarang menerima 'userId')
  */
 
-import { NavigatorScreenParams } from '@react-navigation/native';
+import { NavigatorScreenParams, RouteProp } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-// (IMPORT BARU: Dibutuhkan untuk route prop)
-import { RouteProp } from '@react-navigation/native';
 
 // (TIPE STACK UNTUK 'WORKOUT' - DARI LANGKAH SEBELUMNYA)
 export type WorkOutStackParamList = {
   WorkOutDashboard: undefined;
   WorkOutDetail: { workoutType: string };
+  WorkOutSchedule: undefined;
   ExerciseDetail: { exerciseId: string; exerciseName: string };
 };
 export type WorkOutStackNavigationProp<

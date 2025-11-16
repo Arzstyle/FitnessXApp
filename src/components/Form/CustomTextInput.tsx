@@ -18,18 +18,15 @@ import {
   Platform,
 } from 'react-native';
 import { COLORS } from '../../constant/colors';
-// Kita akan menggunakan 'react-native-vector-icons'
-// Pastikan untuk menginstal: npm install react-native-vector-icons
-// Lalu 'npx pod-install' untuk iOS
-import Icon from 'react-native-vector-icons/Ionicons'; // Contoh pakai Ionicons
+import Icon from 'react-native-vector-icons/Ionicons'; 
 
 // Tipe props
 interface CustomTextInputProps extends TextInputProps {
   label: string;
-  iconName: string; // Nama ikon dari Ionicons
-  isPassword?: boolean; // Untuk handle show/hide password
-  error?: string; // Untuk menampilkan pesan error
-  onTogglePassword?: () => void; // Fungsi untuk toggle password
+  iconName: string; 
+  isPassword?: boolean; 
+  error?: string; 
+  onTogglePassword?: () => void; 
 }
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -39,7 +36,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
   error,
   onTogglePassword,
   secureTextEntry,
-  ...rest // Sisa props (value, onChangeText, etc.)
+  ...rest 
 }) => {
   return (
     <View style={styles.container}>
@@ -59,7 +56,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           style={styles.input}
           placeholderTextColor={COLORS.textGray}
           secureTextEntry={secureTextEntry}
-          {...rest} // value, onChangeText, etc.
+          {...rest}
         />
 
         {/* Ikon Kanan (Khusus Password) */}
@@ -93,15 +90,15 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.backgroundInput, // Warna latar input
+    backgroundColor: COLORS.backgroundInput, 
     borderRadius: 14,
     height: 60,
     paddingHorizontal: 15,
     borderWidth: 1,
-    borderColor: 'transparent', // Default transparan
+    borderColor: 'transparent', 
   },
   inputContainerError: {
-    borderColor: COLORS.danger, // Border merah saat error
+    borderColor: COLORS.danger, 
   },
   icon: {
     marginRight: 10,
@@ -115,7 +112,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Regular',
     color: COLORS.textBlack,
-    // Workaround untuk padding aneh di Android
     paddingVertical: Platform.OS === 'android' ? 0 : 20,
   },
   errorText: {

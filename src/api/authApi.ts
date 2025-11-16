@@ -1,45 +1,103 @@
-import apiClient from './apiClient';
-import { AuthStackParamList } from '../navigation/types'; // (Kita mungkin butuh tipe data form)
+import axios from 'axios';
 
-/**
- * Mendaftarkan pengguna baru (dipanggil dari SignUpScreen)
- * Kita mengirim data form (firstName, lastName, email, pass)
- */
-export const registerUser = (userData: {
-  firstName: string;
-  lastName: string;
-  email: string;
+const MOCKAPI_BASE_URL = 'https://6901223aff8d792314bca44f.mockapi.io'; 
+
+// Tipe data untuk user baru (sesuai form SignUp)
+interface NewUserPayload {
+  firstName: string; 
+  lastName: string;  
+  email: string;     
   password: string;
-}) => {
-  return apiClient.post('/Users', userData);
+}
+
+// (Tipe 'UserResponse' sekarang akan mewarisi 'firstName' dari NewUserPayload)
+export interface UserResponse extends NewUserPayload {
+  id: string;
+  createdAt: string; // <-- Sebaiknya tambahkan ini
+  
+  // Field dari complete profile
+  gender?: string | null;
+  dateOfBirth?: string;
+  weight?: string;
+  height?: string;
+  
+  // Field opsional lain
+  phone?: string;
+  avatar?: string;
+  bio?: string;
+}
+
+// 1. Buat 'instance' axios
+const apiClient = axios.create({
+  baseURL: MOCKAPI_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export const registerUser = async (
+  payload: NewUserPayload
+): Promise<{ data: UserResponse }> => {
+  try {
+    console.log(`API CALL (registerUser): Mengirim payload ke /users`, payload);
+    const response = await apiClient.post<UserResponse>('/users', payload);
+    console.log('API SUCCESS (registerUser):', response.data);
+    return { data: response.data };
+  } catch (error: any) {
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const data = error.response?.data;
+      const message = `API Error (Status ${status}): ${JSON.stringify(data)}`;
+      console.error('API Error (registerUser):', message);
+      throw new Error(message);
+    } else {
+      console.error('Network Error (registerUser):', error.message);
+      throw new Error('Network error or unknown failure: ' + error.message);
+    }
+  }
 };
 
-/**
- * Mencoba login (dipanggil dari SignInScreen)
- */
-export const loginUser = async (email: string, password: string) => {
-  // Ini akan memanggil: GET [baseURL]/users?email=...
-  const response = await apiClient.get('/Users', {
-    params: {
-      email: email,
-    },
-  });
+// Fungsi untuk memvalidasi login user.
 
-  // 1. Cek apakah pengguna ditemukan
-  if (response.data.length === 0) {
-    // Pengguna tidak ditemukan
-    throw new Error('User not found. Please check your email.');
+export const loginUser = async (
+  email: string,
+  password: string
+): Promise<UserResponse> => {
+  try {
+    // 1. Panggil API (GET) dengan parameter filter
+    console.log(`API CALL (loginUser): Mencari user dengan email: ${email}`);
+    const response = await apiClient.get<UserResponse[]>('/users', {
+      params: {
+        email: email,
+        // (Catatan: MockAPI akan mem-filter password juga)
+        password: password, 
+      },
+    });
+
+    // 2. Cek hasil filter
+    if (response.data && response.data.length > 0) {
+      const user = response.data[0];
+      console.log('API SUCCESS (loginUser): User ditemukan', user);
+      return user; // Kembalikan data user
+    } else {
+      console.log('API FAILED (loginUser): Email atau password salah');
+      // Lempar error agar ditangkap oleh 'catch' di SignInScreen
+      throw new Error('Invalid email or password');
+    }
+
+  } catch (error: any) {
+    // 3. (PENTING) Gunakan error handling yang SAMA persis dengan registerUser
+    if (axios.isAxiosError(error)) {
+      const status = error.response?.status;
+      const data = error.response?.data;
+      const message =
+        `API Error (Status ${status}): ${JSON.stringify(data)}`;
+      
+      console.error('API Error (loginUser):', message);
+      throw new Error(message);
+    } else {
+      console.error('Login Error (loginUser):', error.message);
+      throw error; // Teruskan error (e.g., "Invalid email or password")
+    }
   }
-
-  const user = response.data[0];
-
-  // 2. Cek apakah password cocok
-  if (user.password !== password) {
-    // Password salah
-    throw new Error('Invalid password. Please try again.');
-  }
-
-  // 3. Jika berhasil, kembalikan data pengguna
-  // (Kita akan simpan 'id' dan 'name' ke AsyncStorage di SignInScreen)
-  return user;
 };
